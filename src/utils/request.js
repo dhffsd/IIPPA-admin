@@ -16,6 +16,7 @@ instance.interceptors.request.use(
         //请求前的回调
         //添加token
         const tokenStore = useTokenStore();
+        console.log('tokenStore: ', tokenStore.token);
         //判断有没有token
         if(tokenStore.token){
             config.headers.Authorization = tokenStore.token
@@ -36,7 +37,7 @@ import router from '@/router'
 instance.interceptors.response.use(
     result => {
         //判断业务状态码
-        if(result.data.code===0){
+        if(result.data.code===200){
             return result.data;
         }
 
@@ -49,7 +50,7 @@ instance.interceptors.response.use(
     },
     err => {
         //判断响应状态码,如果为401,则证明未登录,提示请登录,并跳转到登录页面
-        if(err.response.status===401){
+        if(err.response.status===402){
             ElMessage.error('请先登录')
             router.push('/login')
         }else{

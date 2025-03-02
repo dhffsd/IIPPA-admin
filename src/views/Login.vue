@@ -38,17 +38,11 @@ const rules = {
 }
 
 //调用后台接口,完成注册
-import { userRegisterService, userLoginService} from '@/api/user.js'
+import { adminRegisterService, adminLoginService} from '@/api/admin.js'
 const register = async () => {
     //registerData是一个响应式对象,如果要获取值,需要.value
-    let result = await userRegisterService(registerData.value);
-    /* if (result.code === 0) {
-        //成功了
-        alert(result.msg ? result.msg : '注册成功');
-    }else{
-        //失败了
-        alert('注册失败')
-    } */
+    let result = await adminRegisterService(registerData.value);
+
     //alert(result.msg ? result.msg : '注册成功');
     ElMessage.success(result.msg ? result.msg : '注册成功')
 }
@@ -61,19 +55,22 @@ import {useRouter} from 'vue-router'
 const router = useRouter()
 const tokenStore = useTokenStore();
 const login =async ()=>{
-    //调用接口,完成登录
-   let result =  await userLoginService(registerData.value);
-   /* if(result.code===0){
-    alert(result.msg? result.msg : '登录成功')
-   }else{
-    alert('登录失败')
-   } */
-   //alert(result.msg? result.msg : '登录成功')
-   ElMessage.success(result.msg ? result.msg : '登录成功')
-   //把得到的token存储到pinia中
-   tokenStore.setToken(result.data)
-   //跳转到首页 路由完成跳转
-   router.push('/')
+    try {
+        //调用接口,完成登录
+        let result =  await adminLoginService(registerData.value);
+        console.log('result: ', await adminLoginService(registerData.value));
+
+        //alert(result.msg? result.msg : '登录成功')
+        ElMessage.success(result.msg ? result.msg : '登录成功')
+        //把得到的token存储到pinia中
+        tokenStore.setToken(result.data)
+        //跳转到首页 路由完成跳转
+        router.push('/')
+    } catch (error) {
+        console.error('登录请求出错:', error);
+        ElMessage.error('登录失败，请稍后重试');
+    }
+
 }
 
 //定义函数,清空数据模型的数据
@@ -155,8 +152,9 @@ const clearRegisterData = ()=>{
     height: 100vh;
     background-color: #fff;
 
+    // 背景嵌套url('@/assets/logo2.png') no-repeat 60% center / 240px auto
     .bg {
-        background: url('@/assets/logo2.png') no-repeat 60% center / 240px auto,
+        background: 
             url('@/assets/login_bg.jpg') no-repeat center / cover;
         border-radius: 0 20px 20px 0;
     }
