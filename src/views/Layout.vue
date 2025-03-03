@@ -19,7 +19,10 @@ const userInfoStore = useUserInfoStore();
 //调用函数,获取用户详细信息
 const getUserInfo = async()=>{
     //调用接口
-    let result = await userInfoService();
+    let result = await adminGetInfoService({ username: userInfoStore.adminInfo.value.username });
+    console.log('userInfoStore.adminInfo.value.username: ', userInfoStore.adminInfo.value.username);
+    
+    console.log('result: ', result);
     //数据存储到pinia中
     userInfoStore.setInfo(result.data);
 }
@@ -29,6 +32,7 @@ getUserInfo();
 import {useRouter} from 'vue-router'
 const router = useRouter();
 import {ElMessage,ElMessageBox} from 'element-plus'
+import { adminGetInfoService } from '../api/admin'
 const handleCommand = (command)=>{
     //判断指令
     if(command === 'logout'){
@@ -78,19 +82,19 @@ const handleCommand = (command)=>{
             <!-- element-plus的菜单标签 -->
             <el-menu active-text-color="#ffd04b" background-color="#232323"  text-color="#fff"
                 router>
-                <el-menu-item index="/article/category">
+                <el-menu-item index="/info/manage">
                     <el-icon>
                         <Management />
                     </el-icon>
                     <span>信息概览</span>
                 </el-menu-item>
-                <el-menu-item index="/article/manage">
+                <el-menu-item index="/product/manage">
                     <el-icon>
                         <Promotion />
                     </el-icon>
                     <span>商品管理</span>
                 </el-menu-item>
-                <el-menu-item index="/article/manage">
+                <el-menu-item index="/price/manage">
                     <el-icon>
                         <Promotion />
                     </el-icon>
@@ -102,7 +106,7 @@ const handleCommand = (command)=>{
                     </el-icon>
                     <span>用户管理</span>
                 </el-menu-item>
-                <el-menu-item index="/article/manage">
+                <el-menu-item index="/supplier/manage">
                     <el-icon>
                         <Promotion />
                     </el-icon>
@@ -140,7 +144,7 @@ const handleCommand = (command)=>{
         <el-container>
             <!-- 头部区域 -->
             <el-header>
-                <div>管理员：<strong>{{ userInfoStore.info.nickname }}</strong></div>
+                <div>管理员：<strong>{{ userInfoStore.info.username }}</strong></div>
                 <!-- 下拉菜单 -->
                 <!-- command: 条目被点击后会触发,在事件函数上可以声明一个参数,接收条目对应的指令 -->
                 <el-dropdown placement="bottom-end" @command="handleCommand">

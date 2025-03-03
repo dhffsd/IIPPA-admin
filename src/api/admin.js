@@ -22,6 +22,12 @@ export const adminLoginService = (loginData)=>{
     return request.post('/admin/login',params)
 }
 
+// 获取管理员信息
+export const adminGetInfoService = (params)=>{
+    
+    return request.get('/admin/getInfo',{params:params})
+}
+
 
 //修改管理员个人信息
 export const adminInfoUpdateService = (adminInfoData)=>{

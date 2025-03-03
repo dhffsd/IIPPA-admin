@@ -9,6 +9,10 @@ import ArticleManageVue from '@/views/article/ArticleManage.vue'
 import UserAvatarVue from '@/views/user/UserAvatar.vue'
 import UserInfoVue from '@/views/user/UserInfo.vue'
 import UserResetPasswordVue from '@/views/user/UserResetPassword.vue'
+import InformationVue from '../views/information/Information.vue'
+import PriceManagementVue from '../views/price/PriceManagement.vue'
+import ProductManagementVue from '../views/product/ProductManagement.vue'
+import SupplierManagementVue from '../views/supplier/SupplierManagement.vue'
 
 //定义路由关系
 const routes = [
@@ -19,7 +23,11 @@ const routes = [
             { path: '/article/manage', component: ArticleManageVue },
             { path: '/user/info', component: UserInfoVue },
             { path: '/user/avatar', component: UserAvatarVue },
-            { path: '/user/resetPassword', component: UserResetPasswordVue }
+            { path: '/user/resetPassword', component: UserResetPasswordVue },
+            { path: '/info/manage', component: InformationVue },
+            { path: '/price/manage', component: PriceManagementVue },
+            { path: '/product/manage', component: ProductManagementVue },
+            { path: '/supplier/manage', component: SupplierManagementVue },
         ]
     }
 ]

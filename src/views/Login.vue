@@ -7,6 +7,8 @@ const isRegister = ref(false)
 //定义数据模型
 const registerData = ref({
     username: '',
+    email: '',
+    phone: '',
     password: '',
     rePassword: ''
 })
@@ -51,23 +53,26 @@ const register = async () => {
 //表单数据校验
 //登录函数
 import {useTokenStore} from '@/stores/token.js'
+import useUserInfoStore from '@/stores/userInfo.js'
 import {useRouter} from 'vue-router'
 const router = useRouter()
 const tokenStore = useTokenStore();
+const userInfoStore = useUserInfoStore();
 const login =async ()=>{
     try {
         //调用接口,完成登录
         let result =  await adminLoginService(registerData.value);
-        console.log('result: ', await adminLoginService(registerData.value));
-
+        
         //alert(result.msg? result.msg : '登录成功')
         ElMessage.success(result.msg ? result.msg : '登录成功')
         //把得到的token存储到pinia中
         tokenStore.setToken(result.data)
+        userInfoStore.setUsername(registerData.value.username)
+        // console.log('userInfoStore.adminInfo.value.username: ', userInfoStore.adminInfo.value.username);
         //跳转到首页 路由完成跳转
         router.push('/')
     } catch (error) {
-        console.error('登录请求出错:', error);
+        
         ElMessage.error('登录失败，请稍后重试');
     }
 
@@ -94,6 +99,12 @@ const clearRegisterData = ()=>{
                 </el-form-item>
                 <el-form-item prop="username">
                     <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.username"></el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input :prefix-icon="User" placeholder="请输入邮箱" v-model="registerData.email"></el-input>
+                </el-form-item>
+                <el-form-item prop="phone">
+                    <el-input :prefix-icon="User" placeholder="请输入手机号" v-model="registerData.phone"></el-input>
                 </el-form-item>
                 <el-form-item prop="password">
                     <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码"
