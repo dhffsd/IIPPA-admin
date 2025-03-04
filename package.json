@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.5.1",
     "big-event": "file:",
@@ -15,6 +16,7 @@
     "pinia": "^2.1.7",
     "pinia-persistedstate-plugin": "^0.1.0",
     "vue": "^3.3.4",
+    "vue-countup-v3": "^1.4.2",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
