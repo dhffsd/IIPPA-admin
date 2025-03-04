@@ -16,7 +16,7 @@ instance.interceptors.request.use(
         //请求前的回调
         //添加token
         const tokenStore = useTokenStore();
-        console.log('tokenStore: ', tokenStore.token);
+        
         //判断有没有token
         if(tokenStore.token){
             config.headers.Authorization = tokenStore.token

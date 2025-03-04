@@ -5,7 +5,8 @@ const useUserInfoStore = defineStore('userInfo',()=>{
 
     const info = ref({})
     const adminInfo = ref({
-        username: '' 
+        username: '',
+        role: '' 
     })
 
     const setInfo = (newInfo)=>{
@@ -13,15 +14,25 @@ const useUserInfoStore = defineStore('userInfo',()=>{
     }
 
     const setUsername = (newUserName)=>{
+        
         adminInfo.value.username = newUserName
+        
 
     }
+
+    const setRole = (newRole)=>{
+        
+        adminInfo.value.role = newRole
+        
+
+    }
+
 
     const removeInfo = ()=>{
         info.value = {}
     }
-    console.log('adminInfo.value.username: ', adminInfo.value.username);
-    return {info,adminInfo,setInfo,removeInfo,setUsername}
+    
+    return {info,adminInfo,setInfo,removeInfo,setUsername,setRole}
 
 },{persist:true})
 

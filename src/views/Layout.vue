@@ -1,5 +1,9 @@
 <script setup>
 import {
+    DataBoard,
+    Goods,
+    Coin,
+    OfficeBuilding,
     Management,
     Promotion,
     UserFilled,
@@ -17,15 +21,21 @@ import {useTokenStore} from '@/stores/token.js'
 const tokenStore = useTokenStore();
 const userInfoStore = useUserInfoStore();
 //调用函数,获取用户详细信息
-const getUserInfo = async()=>{
-    //调用接口
-    let result = await adminGetInfoService({ username: userInfoStore.adminInfo.value.username });
-    console.log('userInfoStore.adminInfo.value.username: ', userInfoStore.adminInfo.value.username);
+const getUserInfo = async () => {
+  try {
+    const result = await adminGetInfoService({ username: userInfoStore.adminInfo.username });
+    userInfoStore.setRole(result.data.role)
     
-    console.log('result: ', result);
-    //数据存储到pinia中
-    userInfoStore.setInfo(result.data);
-}
+    // 确保 result.data 包含 username
+    if (result?.data) {
+      userInfoStore.setInfo(result.data);
+    } else {
+      
+    }
+  } catch (error) {
+    
+  }
+};
 
 getUserInfo();
 //条目被点击后,调用的函数
@@ -84,31 +94,31 @@ const handleCommand = (command)=>{
                 router>
                 <el-menu-item index="/info/manage">
                     <el-icon>
-                        <Management />
+                        <DataBoard />
                     </el-icon>
                     <span>信息概览</span>
                 </el-menu-item>
                 <el-menu-item index="/product/manage">
                     <el-icon>
-                        <Promotion />
+                        <Goods />
                     </el-icon>
                     <span>商品管理</span>
                 </el-menu-item>
                 <el-menu-item index="/price/manage">
                     <el-icon>
-                        <Promotion />
+                        <Coin />
                     </el-icon>
                     <span>价格管理</span>
                 </el-menu-item>
-                <el-menu-item index="/article/manage">
+                <el-menu-item index="/user/manage">
                     <el-icon>
-                        <Promotion />
+                        <User />
                     </el-icon>
                     <span>用户管理</span>
                 </el-menu-item>
                 <el-menu-item index="/supplier/manage">
                     <el-icon>
-                        <Promotion />
+                        <OfficeBuilding  />
                     </el-icon>
                     <span>供应商管理</span>
                 </el-menu-item>
@@ -125,12 +135,6 @@ const handleCommand = (command)=>{
                         </el-icon>
                         <span>基本资料</span>
                     </el-menu-item>
-                    <el-menu-item index="/user/avatar">
-                        <el-icon>
-                            <Crop />
-                        </el-icon>
-                        <span>更换头像</span>
-                    </el-menu-item>
                     <el-menu-item index="/user/resetPassword">
                         <el-icon>
                             <EditPen />
@@ -144,7 +148,7 @@ const handleCommand = (command)=>{
         <el-container>
             <!-- 头部区域 -->
             <el-header>
-                <div>管理员：<strong>{{ userInfoStore.info.username }}</strong></div>
+                <div>{{ userInfoStore.adminInfo.role + ':  '}}<strong>{{ userInfoStore.info.username }}</strong></div>
                 <!-- 下拉菜单 -->
                 <!-- command: 条目被点击后会触发,在事件函数上可以声明一个参数,接收条目对应的指令 -->
                 <el-dropdown placement="bottom-end" @command="handleCommand">
@@ -157,7 +161,6 @@ const handleCommand = (command)=>{
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item command="info" :icon="User">基本资料</el-dropdown-item>
-                            <el-dropdown-item command="avatar" :icon="Crop">更换头像</el-dropdown-item>
                             <el-dropdown-item command="resetPassword" :icon="EditPen">重置密码</el-dropdown-item>
                             <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
                         </el-dropdown-menu>

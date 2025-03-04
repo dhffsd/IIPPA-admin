@@ -44,9 +44,6 @@ const updateUserInfo = async ()=>{
                     <el-form-item label="登录名称">
                         <el-input v-model="userInfo.username" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="用户昵称" prop="nickname">
-                        <el-input v-model="userInfo.nickname"></el-input>
-                    </el-form-item>
                     <el-form-item label="用户邮箱" prop="email">
                         <el-input v-model="userInfo.email"></el-input>
                     </el-form-item>

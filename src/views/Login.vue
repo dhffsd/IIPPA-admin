@@ -68,7 +68,7 @@ const login =async ()=>{
         //把得到的token存储到pinia中
         tokenStore.setToken(result.data)
         userInfoStore.setUsername(registerData.value.username)
-        // console.log('userInfoStore.adminInfo.value.username: ', userInfoStore.adminInfo.value.username);
+        
         //跳转到首页 路由完成跳转
         router.push('/')
     } catch (error) {

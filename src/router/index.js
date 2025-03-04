@@ -13,14 +13,13 @@ import InformationVue from '../views/information/Information.vue'
 import PriceManagementVue from '../views/price/PriceManagement.vue'
 import ProductManagementVue from '../views/product/ProductManagement.vue'
 import SupplierManagementVue from '../views/supplier/SupplierManagement.vue'
+import UserVue from '../views/user/UserVue.vue'
 
 //定义路由关系
 const routes = [
     { path: '/login', component: LoginVue },
     {
-        path: '/', component: LayoutVue,redirect:'/article/manage', children: [
-            { path: '/article/category', component: ArticleCategoryVue },
-            { path: '/article/manage', component: ArticleManageVue },
+        path: '/', component: LayoutVue,redirect:'/info/manage', children: [
             { path: '/user/info', component: UserInfoVue },
             { path: '/user/avatar', component: UserAvatarVue },
             { path: '/user/resetPassword', component: UserResetPasswordVue },
@@ -28,6 +27,7 @@ const routes = [
             { path: '/price/manage', component: PriceManagementVue },
             { path: '/product/manage', component: ProductManagementVue },
             { path: '/supplier/manage', component: SupplierManagementVue },
+            { path: '/user/manage', component: UserVue}
         ]
     }
 ]
