@@ -6,7 +6,7 @@ import {
 
 import { ref } from 'vue'
 
-//文章分类数据模型
+//商品管理数据模型
 const categorys = ref([
     {
         "id": 3,
@@ -37,7 +37,7 @@ const categoryId = ref('')
 //用户搜索时选中的发布状态
 const state = ref('')
 
-//文章列表数据模型
+//商品列表数据模型
 const articles = ref([
     {
         "id": 5,
@@ -88,7 +88,7 @@ const onCurrentChange = (num) => {
 }
 
 
-//回显文章分类
+//回显商品管理
 import { articleCategoryListService, articleListService,articleAddService } from '@/api/article.js'
 const articleCategoryList = async () => {
     let result = await articleCategoryListService();
@@ -96,7 +96,7 @@ const articleCategoryList = async () => {
     categorys.value = result.data;
 }
 
-//获取文章列表数据
+//获取商品列表数据
 const articleList = async () => {
     let params = {
         pageNum: pageNum.value,
@@ -150,7 +150,7 @@ const uploadSuccess = (result)=>{
     console.log(result.data);
 }
 
-//添加文章
+//添加商品
 import {ElMessage} from 'element-plus'
 const addArticle = async (clickState)=>{
     //把发布状态赋值给数据模型
@@ -172,15 +172,15 @@ const addArticle = async (clickState)=>{
     <el-card class="page-container">
         <template #header>
             <div class="header">
-                <span>文章管理</span>
+                <span>商品管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true">添加文章</el-button>
+                    <el-button type="primary" @click="visibleDrawer = true">添加商品</el-button>
                 </div>
             </div>
         </template>
         <!-- 搜索表单 -->
         <el-form inline>
-            <el-form-item label="文章分类：">
+            <el-form-item label="商品管理：">
                 <el-select placeholder="请选择" v-model="categoryId">
                     <el-option v-for="c in categorys" :key="c.id" :label="c.categoryName" :value="c.id">
                     </el-option>
@@ -198,9 +198,9 @@ const addArticle = async (clickState)=>{
                 <el-button @click="categoryId = ''; state = ''">重置</el-button>
             </el-form-item>
         </el-form>
-        <!-- 文章列表 -->
+        <!-- 商品列表 -->
         <el-table :data="articles" style="width: 100%">
-            <el-table-column label="文章标题" width="400" prop="title"></el-table-column>
+            <el-table-column label="商品标题" width="400" prop="title"></el-table-column>
             <el-table-column label="分类" prop="categoryName"></el-table-column>
             <el-table-column label="发表时间" prop="createTime"> </el-table-column>
             <el-table-column label="状态" prop="state"></el-table-column>
@@ -220,19 +220,19 @@ const addArticle = async (clickState)=>{
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
 
         <!-- 抽屉 -->
-        <el-drawer v-model="visibleDrawer" title="添加文章" direction="rtl" size="50%">
-            <!-- 添加文章表单 -->
+        <el-drawer v-model="visibleDrawer" title="添加商品" direction="rtl" size="50%">
+            <!-- 添加商品表单 -->
             <el-form :model="articleModel" label-width="100px">
-                <el-form-item label="文章标题">
+                <el-form-item label="商品标题">
                     <el-input v-model="articleModel.title" placeholder="请输入标题"></el-input>
                 </el-form-item>
-                <el-form-item label="文章分类">
+                <el-form-item label="商品管理">
                     <el-select placeholder="请选择" v-model="articleModel.categoryId">
                         <el-option v-for="c in categorys" :key="c.id" :label="c.categoryName" :value="c.id">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="文章封面">
+                <el-form-item label="商品封面">
 
                     <!-- 
                         auto-upload:设置是否自动上传
@@ -254,7 +254,7 @@ const addArticle = async (clickState)=>{
                         </el-icon>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="文章内容">
+                <el-form-item label="商品内容">
                     <div class="editor">
                         <quill-editor theme="snow" v-model:content="articleModel.content" contentType="html">
                         </quill-editor>
