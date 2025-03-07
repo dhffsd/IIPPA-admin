@@ -12,6 +12,7 @@
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.5.1",
     "big-event": "file:",
+    "dayjs": "^1.11.13",
     "element-plus": "^2.4.1",
     "pinia": "^2.1.7",
     "pinia-persistedstate-plugin": "^0.1.0",

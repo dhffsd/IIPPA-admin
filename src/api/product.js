@@ -1,22 +1,34 @@
 import request from '@/utils/request.js'
 // 增加商品
 export const addProductService = (productData)=>{
-    return request.post("/admin/product/add",productData)
+    //借助于UrlSearchParams完成传递
+    const params = new URLSearchParams()
+    for(let key in productData){
+        params.append(key,productData[key]);
+    }
+    return request.post("/admin/product/add",params)
 }
 
 // 修改商品
 export const updateProductService = (productData)=>{
-    return request.put("/admin/product/update",productData)
+    
+    //借助于UrlSearchParams完成传递
+    const params = new URLSearchParams()
+    for(let key in productData){
+        params.append(key,productData[key]);
+    }
+    return request.put("/admin/product/update",params)
 }
 
 // 删除商品
 export const deleteProductService = (id)=>{
-    return request.delete("/admin/product/delete",id)
+    
+    return request.delete("/admin/product/delete",{params:{id:Number(id)}})
 }
 
-// 获取商品
+// 根据id获取商品
 export const getProductService = (params)=>{
-    return request.get("/admin/product/get",{params:params})
+    return request.get("/admin/product/getId",{params:params})
 }
 
 // 获取商品

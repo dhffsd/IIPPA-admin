@@ -38,7 +38,11 @@
         <el-table-column prop="name" label="商品名称" min-width="160" />
         <el-table-column prop="description" label="商品描述" min-width="240" show-overflow-tooltip />
         <el-table-column prop="category" label="分类" width="140" />
-        <el-table-column prop="createdTime" label="创建时间" width="180" />
+        <el-table-column prop="createdTime" label="创建时间" width="180">
+            <template #default="{row}">
+                {{ formatTime(row.createdTime) }}
+            </template>
+        </el-table-column>
         <el-table-column label="操作" width="140" fixed="right">
           <template #default="{row}">
             <el-button 
@@ -86,17 +90,17 @@
             <el-input v-model="productModel.name" placeholder="请输入名称" />
           </el-form-item>
   
-          <el-form-item label="商品分类" prop="categoryId">
+          <el-form-item label="商品分类" prop="category">
             <el-select 
-              v-model="productModel.categoryId" 
+              v-model="productModel.category" 
               placeholder="请选择分类"
               style="width: 100%"
             >
               <el-option 
                 v-for="c in categorys" 
-                :key="c.id" 
-                :label="c.categoryName" 
-                :value="c.id" 
+                :key="c" 
+                :label="c" 
+                :value="c" 
               />
             </el-select>
           </el-form-item>
@@ -107,21 +111,22 @@
           </el-form-item>
   
           <el-form-item label="商品描述" prop="description">
-            <QuillEditor 
-              v-model:content="productModel.description" 
-              contentType="html"
-              theme="snow" 
-              :options="{
-                modules: {
-                  toolbar: [
-                    ['bold', 'italic', 'underline'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    ['link', 'image']
-                  ]
-                }
-              }"
-            />
-          </el-form-item>
+            <div class="quill-wrapper">
+                <QuillEditor 
+                v-model:content="productModel.description" 
+                contentType="html"
+                theme="snow" 
+                :options="{
+                    modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }]
+                    ]
+                    }
+                }"
+                />
+            </div>
+            </el-form-item>
   
           <el-form-item>
             <el-button type="primary" @click="submitForm">提交</el-button>
@@ -137,6 +142,7 @@
   import { Edit, Delete } from '@element-plus/icons-vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { QuillEditor } from '@vueup/vue-quill';
+  import dayjs from 'dayjs'
   import '@vueup/vue-quill/dist/vue-quill.snow.css';
   import {
     addProductService,
@@ -156,6 +162,14 @@
   const pageSize = ref(10);
   const isEditMode = ref(false);
   
+
+
+// 添加格式化方法
+const formatTime = (time) => {
+  return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
+}
+
+
   // 表单相关
   const searchForm = reactive({
     name: '',
@@ -257,7 +271,9 @@ const loadProducts = async () => {
       type: 'warning'
     }).then(async () => {
       try {
+        
         await deleteProductService(id);
+
         ElMessage.success('删除成功');
         loadProducts();
       } catch (err) {
@@ -275,6 +291,7 @@ const loadProducts = async () => {
         ElMessage.success('更新成功');
       } else {
         await addProductService(productModel);
+        
         ElMessage.success('添加成功');
       }
       visibleDrawer.value = false;
@@ -325,4 +342,21 @@ const loadProducts = async () => {
     color: #666;
     margin-top: 5px;
   }
+
+  .quill-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 调整工具栏位置 */
+.ql-toolbar {
+  order: 1; /* 默认已是第一项，此声明可确保优先级 */
+}
+
+/* 确保编辑区域在下方 */
+.ql-container {
+  order: 2;
+  min-height: 200px; /* 建议设置最小高度 */
+}
   </style>
