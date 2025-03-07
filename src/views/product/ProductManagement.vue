@@ -149,7 +149,8 @@
     updateProductService,
     deleteProductService,
     getProductService,
-    getAllProductService
+    getAllProductService,
+    getNameProductService
   } from '@/api/product.js';
   
   // 数据状态
@@ -210,7 +211,14 @@ const loadProducts = async () => {
       category: searchForm.category
     };
     
-    const res = await getAllProductService(params);
+    let res;
+      if (searchForm.name || searchForm.category) {
+        // 如果有搜索条件，调用 getNameProductService 接口
+        res = await getNameProductService(params);
+      } else {
+        // 没有搜索条件，调用 getAllProductService 接口
+        res = await getAllProductService(params);
+      }
     products.value = res.data.items;
     total.value = res.data.total;
 
@@ -227,7 +235,7 @@ const loadProducts = async () => {
   
   // 搜索和分页 ============================================
   const handleSearch = () => {
-    pageNum.value = 1;
+    pageNum.value = 1; 
     loadProducts();
   };
   
@@ -235,7 +243,6 @@ const loadProducts = async () => {
     searchFormRef.value.resetFields();
     handleSearch();
   };
-  
   const onSizeChange = (size) => {
     pageSize.value = size;
     loadProducts();

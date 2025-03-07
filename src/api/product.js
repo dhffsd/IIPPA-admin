@@ -35,3 +35,8 @@ export const getProductService = (params)=>{
 export const getAllProductService = (params)=>{
     return request.get("/admin/product/getAll",{params:params})
 }
+
+// 根据名称获取商品
+export const getNameProductService = (params)=>{
+    return request.get("/admin/product/getName",{params:params})
+}
