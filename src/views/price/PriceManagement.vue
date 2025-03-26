@@ -18,8 +18,8 @@
     <div class="product-list">
       <el-row :gutter="20" class="center-container">
         <el-col
-          v-for="(product, index) in filteredProducts"
-          :key="product.id"
+          v-for="(item, index) in filteredProducts"
+          :key="item.history.id"
           :xs="24"
           :sm="12"
           :md="8"
@@ -30,7 +30,7 @@
             <!-- 卡片头部 -->
             <div class="card-header">
               <el-tag type="info" class="rank-tag">No.{{ index + 1 }}</el-tag>
-              <h3 class="product-name">{{ product.name }}</h3>
+              <h3 class="product-name">{{ item.productName }}</h3>
             </div>
             <!-- 分割线 -->
             <el-divider />
@@ -41,7 +41,7 @@
                 <span class="price-label">商品价格</span>
                 <div class="price-value">
                   <span class="currency">¥</span>
-                  <el-statistic :value="product.basePrice" :precision="2" />
+                  <el-statistic :value="item.history.price" :precision="2" />
                 </div>
               </div>
               <!-- 物流费用 -->
@@ -49,7 +49,7 @@
                 <span class="price-label">物流费用</span>
                 <div class="price-value">
                   <span class="currency">¥</span>
-                  <el-statistic :value="product.logisticsCost" :precision="2" />
+                  <el-statistic :value="item.history.logisticsCost" :precision="2" />
                 </div>
               </div>
               <!-- 综合成本分割线 -->
@@ -58,7 +58,7 @@
               <div class="total-price">
                 <span class="currency">¥</span>
                 <el-statistic
-                  :value="product.totalCost"
+                  :value="item.history.totalCost"
                   :precision="2"
                   class="highlight-price"
                 />
@@ -68,7 +68,7 @@
                 <span class="price-label">最高价</span>
                 <div class="price-value">
                   <span class="currency">¥</span>
-                  <el-statistic :value="product.maxPrice || 0" :precision="2" />
+                  <el-statistic :value="item.history.maxPrice || 0" :precision="2" />
                 </div>
               </div>
               <!-- 最低价 -->
@@ -76,20 +76,20 @@
                 <span class="price-label">最低价</span>
                 <div class="price-value">
                   <span class="currency">¥</span>
-                  <el-statistic :value="product.minPrice || 0" :precision="2" />
+                  <el-statistic :value="item.history.minPrice || 0" :precision="2" />
                 </div>
               </div>
             </div>
             <!-- 评分部分 -->
             <div class="rating-section">
               <el-rate
-                v-model="product.rating"
+                v-model="item.history.rating"
                 disabled
                 :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
                 :max="5"
                 :allow-half="true"
               />
-              <span class="rating-text">{{ product.rating.toFixed(1) }}</span>
+              <span class="rating-text">{{ item.history.rating.toFixed(1) }}</span>
             </div>
           </el-card>
         </el-col>
@@ -100,136 +100,28 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
-
-// 模拟商品数据
-const products = ref([
-  {
-    id: 1,
-    name: '商品1',
-    basePrice: 2450.5,
-    logisticsCost: 320.0,
-    totalCost: 2770.5,
-    rating: 4.7,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 2,
-    name: '商品2',
-    basePrice: 2380.0,
-    logisticsCost: 450.0,
-    totalCost: 2830.0,
-    rating: 4.5,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 3,
-    name: '商品3',
-    basePrice: 2550.0,
-    logisticsCost: 280.0,
-    totalCost: 2830.0,
-    rating: 4.9,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 4,
-    name: '商品4',
-    basePrice: 2420.0,
-    logisticsCost: 360.0,
-    totalCost: 2780.0,
-    rating: 4.6,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 5,
-    name: '商品5',
-    basePrice: 2500.0,
-    logisticsCost: 300.0,
-    totalCost: 2800.0,
-    rating: 4.8,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 6,
-    name: '商品6',
-    basePrice: 2350.0,
-    logisticsCost: 400.0,
-    totalCost: 2750.0,
-    rating: 4.4,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 7,
-    name: '商品7',
-    basePrice: 2600.0,
-    logisticsCost: 350.0,
-    totalCost: 2950.0,
-    rating: 4.3,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 8,
-    name: '商品8',
-    basePrice: 2200.0,
-    logisticsCost: 420.0,
-    totalCost: 2620.0,
-    rating: 4.6,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 9,
-    name: '商品9',
-    basePrice: 2580.0,
-    logisticsCost: 310.0,
-    totalCost: 2890.0,
-    rating: 4.7,
-    maxPrice: null,
-    minPrice: null
-  },
-  {
-    id: 10,
-    name: '商品10',
-    basePrice: 2320.0,
-    logisticsCost: 430.0,
-    totalCost: 2750.0,
-    rating: 4.5,
-    maxPrice: null,
-    minPrice: null
-  }
-]);
+import { getAllPriceService } from '@/api/price.js';
 
 const searchQuery = ref('');
+const dataList = ref([]);
 
 const filteredProducts = computed(() => {
   if (searchQuery.value === '') {
-    return products.value;
+    return dataList.value;
   }
-  return products.value.filter(product =>
-    product.name.includes(searchQuery.value)
+  return dataList.value.filter(item =>
+    item.productName.includes(searchQuery.value)
   );
 });
 
 onMounted(async () => {
-  for (const product of products.value) {
-    try {
-      const [maxPriceResponse, minPriceResponse] = await Promise.all([
-        axios.get(`/api/price-history/max-price/${product.id}`),
-        axios.get(`/api/price-history/min-price/${product.id}`)
-      ]);
-
-      product.maxPrice = maxPriceResponse.data;
-      product.minPrice = minPriceResponse.data;
-    } catch (error) {
-      console.error('Error fetching price history:', error);
+  try {
+    const response = await getAllPriceService();
+    if (response.code === 200) {
+      dataList.value = response.data;
     }
+  } catch (error) {
+    console.error('Error fetching data:', error);
   }
 });
 
@@ -239,6 +131,7 @@ const filterProducts = () => {
 </script>
 
 <style lang="scss" scoped>
+// 样式部分保持不变
 .compare-container {
   padding: 20px;
   max-width: 1400px; 
@@ -274,7 +167,7 @@ const filterProducts = () => {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   }
 
-  .card-header {
+ .card-header {
     display: flex;
     align-items: center;
     justify-content: center; 
@@ -284,38 +177,38 @@ const filterProducts = () => {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
-    .rank-tag {
+   .rank-tag {
       font-size: 16px;
       padding: 8px 12px;
     }
 
-    .product-name {
+   .product-name {
       margin: 0;
       font-size: 18px;
       color: #303133;
     }
   }
 
-  .price-section {
+ .price-section {
     padding: 12px;
 
-    .price-item {
+   .price-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin: 8px 0;
 
-      .price-label {
+     .price-label {
         color: #606266;
         font-size: 14px;
       }
 
-      .price-value {
+     .price-value {
         display: flex;
         align-items: center;
         gap: 4px;
 
-        .currency {
+       .currency {
           color: #F56C6C;
           font-weight: bold;
         }
@@ -327,7 +220,7 @@ const filterProducts = () => {
       }
     }
 
-    .total-divider {
+   .total-divider {
       margin: 16px 0;
 
       :deep(.el-divider__text) {
@@ -337,17 +230,17 @@ const filterProducts = () => {
       }
     }
 
-    .total-price {
+   .total-price {
       text-align: center;
       margin-top: 16px;
 
-      .currency {
+     .currency {
         font-size: 24px;
         color: #F56C6C;
         vertical-align: middle;
       }
 
-      .highlight-price {
+     .highlight-price {
         :deep(.el-statistic__content) {
           font-size: 28px;
           color: #F56C6C;
@@ -356,7 +249,7 @@ const filterProducts = () => {
     }
   }
 
-  .rating-section {
+ .rating-section {
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -364,7 +257,7 @@ const filterProducts = () => {
     gap: 10px;
     padding-bottom: 12px;
 
-    .rating-text {
+   .rating-text {
       color: #F7BA2A;
       font-weight: bold;
       font-size: 16px;
@@ -378,12 +271,12 @@ const filterProducts = () => {
   }
 
  .product-card {
-    .product-name {
+   .product-name {
       font-size: 16px;
     }
 
-    .price-section {
-      .total-price {
+   .price-section {
+     .total-price {
         :deep(.el-statistic__content) {
           font-size: 22px;
         }

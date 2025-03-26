@@ -1,101 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import { VueEcharts } from 'vue3-echarts'
-import {
-  Goods,
-  User,
-  Box,
-  CaretTop,
-  CaretBottom,
-  DataAnalysis
-} from '@element-plus/icons-vue'
-import CountUp from 'vue-countup-v3'
-// 导入 echarts 库
-import * as echarts from 'echarts'; 
-
-// 核心指标数据
-const totalProducts = ref(1856)
-const totalUsers = ref(3241)
-const totalSuppliers = ref(128)
-
-// 趋势数据
-const productTrend = ref(8.2)
-const userTrend = ref(12.5)
-const supplierTrend = ref(-3.4)
-
-// 销售趋势图表数据
-const salesTrend = ref({
-  xAxis: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-  series: [{
-    name: '销售额',
-    type: 'line',
-    smooth: true,
-    data: [150, 230, 224, 218, 135, 147, 260, 420, 380, 450, 580, 620],
-    areaStyle: {
-      color: {
-        type: 'linear',
-        x: 0,
-        y: 0,
-        x2: 0,
-        y2: 1,
-        colorStops: [{
-          offset: 0,
-          color: 'rgba(64, 158, 255, 0.4)'
-        }, {
-          offset: 1,
-          color: 'rgba(64, 158, 255, 0)'
-        }]
-      }
-    },
-    lineStyle: {
-      width: 3,
-      color: '#409EFF'
-    }
-  }]
-})
-
-// 收入来源饼图数据
-const revenueSources = ref({
-  series: [{
-    type: 'pie',
-    radius: ['40%', '70%'],
-    data: [
-      { value: 335, name: '线上商城' },
-      { value: 310, name: '实体门店' },
-      { value: 234, name: '批发业务' },
-      { value: 135, name: '企业定制' }
-    ],
-    label: {
-      formatter: '{b}: {d}%'
-    }
-  }]
-})
-
-// 地区销售柱状图数据
-const regionalSales = ref({
-  xAxis: ['华东', '华北', '华南', '华中', '西南', '西北', '东北'],
-  series: [{
-    type: 'bar',
-    data: [320, 280, 301, 134, 190, 230, 180],
-    itemStyle: {
-      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-        { offset: 0, color: '#83bff6' },
-        { offset: 0.5, color: '#188df0' },
-        { offset: 1, color: '#188df0' }
-      ])
-    }
-  }]
-})
-
-// 实时订单数据
-const recentOrders = ref([
-  { id: '202308001', amount: 1580, status: '已完成', time: '2023-08-01 14:23' },
-  { id: '202308002', amount: 2450, status: '已发货', time: '2023-08-02 09:45' },
-  { id: '202308003', amount: 899, status: '待付款', time: '2023-08-02 15:12' },
-  { id: '202308004', amount: 3560, status: '已完成', time: '2023-08-03 11:27' }
-])
-</script>
-
 <template>
   <el-card class="dashboard-container">
     <template #header>
@@ -119,13 +21,13 @@ const recentOrders = ref([
               :end-val="totalProducts"
               :options="{ duration: 1.5 }"
             />
-            <div class="card-trend">
+            <!-- <div class="card-trend">
               <el-icon :color="productTrend >= 0 ? '#67C23A' : '#F56C6C'">
                 <CaretTop v-if="productTrend >= 0" />
                 <CaretBottom v-else />
               </el-icon>
-              {{ Math.abs(productTrend) }}%
-            </div>
+              {{ Math.abs(productTrend).toFixed(2) }}%
+            </div> -->
           </div>
         </div>
       </el-col>
@@ -141,13 +43,13 @@ const recentOrders = ref([
               :end-val="totalUsers"
               :options="{ duration: 1.5 }"
             />
-            <div class="card-trend">
+            <!-- <div class="card-trend">
               <el-icon :color="userTrend >= 0 ? '#67C23A' : '#F56C6C'">
                 <CaretTop v-if="userTrend >= 0" />
                 <CaretBottom v-else />
               </el-icon>
-              {{ Math.abs(userTrend) }}%
-            </div>
+              {{ Math.abs(userTrend).toFixed(2) }}%
+            </div> -->
           </div>
         </div>
       </el-col>
@@ -163,13 +65,13 @@ const recentOrders = ref([
               :end-val="totalSuppliers"
               :options="{ duration: 1.5 }"
             />
-            <div class="card-trend">
+            <!-- <div class="card-trend">
               <el-icon :color="supplierTrend >= 0 ? '#67C23A' : '#F56C6C'">
                 <CaretTop v-if="supplierTrend >= 0" />
                 <CaretBottom v-else />
               </el-icon>
-              {{ Math.abs(supplierTrend) }}%
-            </div>
+              {{ Math.abs(supplierTrend).toFixed(2) }}%
+            </div> -->
           </div>
         </div>
       </el-col>
@@ -304,6 +206,158 @@ const recentOrders = ref([
     </el-card>
   </el-card>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { VueEcharts } from 'vue3-echarts'
+import {
+  Goods,
+  User,
+  Box,
+  CaretTop,
+  CaretBottom,
+  DataAnalysis
+} from '@element-plus/icons-vue'
+import CountUp from 'vue-countup-v3'
+// 导入 echarts 库
+import * as echarts from 'echarts'; 
+import {  
+  getProductService,
+  getSupplierService,
+  getUserService
+} from '@/api/info.js'
+
+// 核心指标数据
+const totalProducts = ref(0)
+const totalUsers = ref(0)
+const totalSuppliers = ref(0)
+
+// 上一次的核心指标数据
+const prevTotalProducts = ref(0)
+const prevTotalUsers = ref(0)
+const prevTotalSuppliers = ref(0)
+
+// 趋势数据
+const productTrend = ref(0)
+const userTrend = ref(0)
+const supplierTrend = ref(0)
+
+// 销售趋势图表数据
+const salesTrend = ref({
+  xAxis: [],
+  series: [{
+    name: '销售额',
+    type: 'line',
+    smooth: true,
+    data: [],
+    areaStyle: {
+      color: {
+        type: 'linear',
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: [{
+          offset: 0,
+          color: 'rgba(64, 158, 255, 0.4)'
+        }, {
+          offset: 1,
+          color: 'rgba(64, 158, 255, 0)'
+        }]
+      }
+    },
+    lineStyle: {
+      width: 3,
+      color: '#409EFF'
+    }
+  }]
+})
+
+// 收入来源饼图数据
+const revenueSources = ref({
+  series: [{
+    type: 'pie',
+    radius: ['40%', '70%'],
+    data: [],
+    label: {
+      formatter: '{b}: {d}%'
+    }
+  }]
+})
+
+// 地区销售柱状图数据
+const regionalSales = ref({
+  xAxis: [],
+  series: [{
+    type: 'bar',
+    data: [],
+    itemStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: '#83bff6' },
+        { offset: 0.5, color: '#188df0' },
+        { offset: 1, color: '#188df0' }
+      ])
+    }
+  }]
+})
+
+// 实时订单数据
+const recentOrders = ref([])
+
+const fetchData = async () => {
+  try {
+    // 保存上一次的数据
+    prevTotalProducts.value = totalProducts.value
+    prevTotalUsers.value = totalUsers.value
+    prevTotalSuppliers.value = totalSuppliers.value
+
+    // 获取商品总数
+    const productRes = await getProductService();
+    totalProducts.value = productRes.data;
+    if (prevTotalProducts.value!== 0) {
+      productTrend.value = ((totalProducts.value - prevTotalProducts.value) / prevTotalProducts.value) * 100
+    }
+
+    // 获取用户总数
+    const userRes = await getUserService();
+    totalUsers.value = userRes.data;
+    if (prevTotalUsers.value!== 0) {
+      userTrend.value = ((totalUsers.value - prevTotalUsers.value) / prevTotalUsers.value) * 100
+    }
+
+    // 获取供应商总数
+    const supplierRes = await getSupplierService();
+    totalSuppliers.value = supplierRes.data;
+    if (prevTotalSuppliers.value!== 0) {
+      supplierTrend.value = ((totalSuppliers.value - prevTotalSuppliers.value) / prevTotalSuppliers.value) * 100
+    }
+
+    // 这里需要根据实际接口补充获取销售趋势、收入来源、地区销售、实时订单的数据
+    // 例如：
+    // const salesTrendRes = await getSalesTrendService();
+    // salesTrend.value.xAxis = salesTrendRes.data.xAxis;
+    // salesTrend.value.series[0].data = salesTrendRes.data.seriesData;
+
+    // const revenueSourcesRes = await getRevenueSourcesService();
+    // revenueSources.value.series[0].data = revenueSourcesRes.data;
+
+    // const regionalSalesRes = await getRegionalSalesService();
+    // regionalSales.value.xAxis = regionalSalesRes.data.xAxis;
+    // regionalSales.value.series[0].data = regionalSalesRes.data.seriesData;
+
+    // const recentOrdersRes = await getRecentOrdersService();
+    // recentOrders.value = recentOrdersRes.data;
+  } catch (error) {
+    console.error('数据获取失败:', error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+  // 每5分钟更新一次数据
+  setInterval(fetchData, 5 * 60 * 1000);
+});
+</script>
 
 <style scoped lang="scss">
 .dashboard-container {
@@ -455,4 +509,4 @@ const recentOrders = ref([
     margin-bottom: 20px;
   }
 }
-</style>
+</style>    

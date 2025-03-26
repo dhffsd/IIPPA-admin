@@ -12,19 +12,17 @@
       <el-form-item label="商品名称" prop="name">
         <el-input v-model="searchForm.name" placeholder="请输入名称" clearable />
       </el-form-item>
-      <el-form-item label="商品分类" prop="category">
-        <el-select v-model="searchForm.category" placeholder="全部分类" style="width: 100px" clearable>
-          <el-option 
-            v-for="c in categorys" 
-            :key="c" 
-            :label="c" 
-            :value="c" 
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="最新价格" prop="latestPrice">
+      <!-- <el-form-item label="商品分类" prop="category">
+        <el-input 
+          v-model="searchForm.category" 
+          placeholder="请输入分类"
+          style="width: 100px"
+          clearable
+        />
+      </el-form-item> -->
+      <!-- <el-form-item label="最新价格" prop="latestPrice">
         <el-input v-model="searchForm.latestPrice" placeholder="请输入价格" clearable />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="resetSearch">重置</el-button>
@@ -40,7 +38,7 @@
       </el-table-column>
       <el-table-column prop="name" label="商品名称" min-width="160" />
       <el-table-column prop="description" label="商品描述" min-width="240" show-overflow-tooltip />
-      <el-table-column prop="latestPrice" label="最新价格" width="140" />
+      <!-- <el-table-column prop="latestPrice" label="最新价格" width="140" /> -->
       <el-table-column prop="category" label="分类" width="140" />
       <el-table-column prop="createdTime" label="创建时间" width="180">
         <template #default="{row}">
@@ -95,18 +93,11 @@
         </el-form-item>
 
         <el-form-item label="商品分类" prop="category">
-          <el-select 
+          <el-input 
             v-model="productModel.category" 
-            placeholder="请选择分类"
+            placeholder="请输入分类"
             style="width: 100%"
-          >
-            <el-option 
-              v-for="c in categorys" 
-              :key="c" 
-              :label="c" 
-              :value="c" 
-            />
-          </el-select>
+          />
         </el-form-item>
 
         <el-form-item label="商品封面">
@@ -132,9 +123,13 @@
           </div>
         </el-form-item>
 
-        <el-form-item label="最新价格" prop="latestPrice">
-          <el-input v-model="productModel.latestPrice" placeholder="请输入价格" />
-        </el-form-item>
+        <!-- <el-form-item label="最新价格" prop="latestPrice">
+          <el-input 
+            v-model="productModel.latestPrice" 
+            placeholder="请输入价格"
+            type="number"
+          />
+        </el-form-item> -->
 
         <el-form-item>
           <el-button type="primary" @click="submitForm">提交</el-button>
@@ -162,7 +157,6 @@ import {
 } from '@/api/product.js';
 
 // 数据状态
-const categorys = ref([]);
 const products = ref([]);
 const total = ref(0);
 const loading = ref(false);
@@ -194,9 +188,12 @@ const productModel = reactive({
 
 const rules = {
   name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-  category: [{ required: true, message: '请选择商品分类', trigger: 'change' }],
+  category: [{ required: true, message: '请输入商品分类', trigger: 'blur' }],
   description: [{ required: true, message: '请输入商品描述', trigger: 'blur' }],
-  latestPrice: [{ required: true, message: '请输入商品价格', trigger: 'blur' }]
+  latestPrice: [
+    { required: true, message: '请输入商品价格', trigger: 'blur' },
+    { type: 'number', message: '请输入有效的价格', trigger: 'blur' }
+  ]
 };
 
 const searchFormRef = ref();
@@ -208,32 +205,25 @@ onMounted(() => {
 });
 
 // 数据加载 ==============================================
-// 修改后的数据加载
 const loadProducts = async () => {
   loading.value = true;
   try {
     const params = {
       page: pageNum.value,
       size: pageSize.value,
-      name: searchForm.name, // 添加搜索参数
+      name: searchForm.name,
       category: searchForm.category,
       latestPrice: searchForm.latestPrice
     };
 
     let res;
     if (searchForm.name || searchForm.category || searchForm.latestPrice) {
-      // 如果有搜索条件，调用 getNameProductService 接口
       res = await getNameProductService(params);
     } else {
-      // 没有搜索条件，调用 getAllProductService 接口
       res = await getAllProductService(params);
     }
     products.value = res.data.items;
     total.value = res.data.total;
-
-    // 动态提取分类
-    const allCategories = res.data.items.map(item => item.category);
-    categorys.value = [...new Set(allCategories)]; // 去重处理
   } catch (err) {
     ElMessage.error('数据加载失败');
   } finally {

@@ -31,6 +31,11 @@ export const userInfoUpdateService = (userInfoData)=>{
    return request.put('/user/update',userInfoData)
 }
 
+// 根据用户名获取信息
+export const userInfoGetNameService = (params) => {
+    return request.get("/web/user/getName",{params:params})
+}
+
 //修改头像
 // export const userAvatarUpdateService = (avatarUrl)=>{
 //     const params = new URLSearchParams();
